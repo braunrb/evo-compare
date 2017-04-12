@@ -428,6 +428,9 @@ class compare
             foreach ($this->config['tvs'] as $categoryId => $tvs) {
 
                 foreach ($tvs as $tv) {
+                    if($this->config['showUniqueValues']==1 && $this->checkUnique($tv)==false){
+                        continue;
+                    }
                     $value = $this->prepareValue($tv, $el);
 
                     $paramArray = [
