@@ -25,7 +25,7 @@
 &css=Покдлючать css;string;1
 &lang=Язык;string;ru
 &active=Клас который вказует что елемент в сравнении;string;active
-&compareSelector=селектор елементов для сравнения;string;.to-compare
+&compareSelector=селектор елементов для сравнения;string;.to-compare //
 &compareCount=Блок с количеством елементов с равнении;string;#compare-count
 
 */
