@@ -129,7 +129,7 @@ class compare
         $resp = json_decode($resp,true);
         $ids = [];
         if(is_array($resp)){
-            foreach (g as $key=> $re){
+            foreach ($resp as $key=> $re){
                 $ids[$key]=intval($key);
                 if(empty($firstItem)){
                     $firstItem = $key;

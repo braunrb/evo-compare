@@ -89,19 +89,21 @@ if(cookie==null){
 else{
     cookie = JSON.parse(cookie)
 }
-var itemCount = 0;
-
+var itemCount;
 //разстановка активного класа для елементов которие уже в сравнении
-if($(config['compareSelector']).length){
-    $(config['compareSelector']).each(function (ind,elem) {
-        elem = $(elem);
-        var id = elem.attr('data-id')
-        if(cookie[id] !== undefined){ //елемента есть в сравнении
-            elem.addClass('active')
-            itemCount ++;
+var tmp = 0;
+function setActive() {
+    for (var key in cookie) {
+        if($(config['compareSelector']+'[data-id="'+key+'"]').length){
+            if(cookie[key] !== undefined){
+                $(config['compareSelector']+'[data-id="'+key+'"]').addClass('active')
+            }
         }
-    })
+        tmp ++;
+    }
+    return tmp;
 }
+itemCount = setActive()
 $(config['compareCount']).text(itemCount)
 
 function deleteFromCompare(id) {
