@@ -1,7 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: admin
- * Date: 09.04.2017
- * Time: 22:05
- */
+
+return $vocab =  [
+    'empty'=>'Для сравнения нужна 2 и более товаров',
+    'paramCaption'=>'Параметры'
+];

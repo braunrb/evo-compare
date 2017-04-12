@@ -1,0 +1,22 @@
+/* helper box */
+#stuffHelper {
+
+
+
+    width: 150px;
+
+    padding: 10px;
+    background: #fff;
+    border-radius: 5px;
+    position: absolute;
+    transition: all 5s ease-in-out;
+
+
+
+    border: 1px solid #888;
+    display: none;
+}
+
+#stuffHelper div { /*padding:5px 0; */
+    text-align: center;
+}

@@ -1,6 +1,6 @@
 <?php
 
 return $vocab =  [
-    'empty'=>'Для сравнения нужна 2 и более товаров',
-    'paramCaption'=>'Параметры'
+    'empty'=>'For comparison, you need more than two products',
+    'paramCaption'=>'Params'
 ];
