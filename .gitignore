@@ -1,5 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
-.idea
+/.idea
 /composer.json
 /HISTORY.md
 /ht.access
@@ -77,3 +77,4 @@
 /assets/tvs/multitv/configs/event.config.inc.php
 /assets/libs/
 /.gitattributes
+/.idea/
