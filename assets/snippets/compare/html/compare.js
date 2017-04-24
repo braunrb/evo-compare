@@ -94,9 +94,19 @@ var itemCount;
 var tmp = 0;
 function setActive() {
     for (var key in cookie) {
-        if($(config['compareSelector']+'[data-id="'+key+'"]').length){
+        var elem = config['compareSelector']+'[data-id="'+key+'"]';
+        if($(elem).length){
             if(cookie[key] !== undefined){
-                $(config['compareSelector']+'[data-id="'+key+'"]').addClass('active')
+                $(elem).addClass('active')
+                if (typeof afterSetDefault == 'function') {
+                    afterSetDefault(key,elem,true);
+                }
+
+            }
+            else{
+                if (typeof afterSetDefault == 'function') {
+                    afterSetDefault(key,elem,false);
+                }
             }
         }
         tmp ++;
