@@ -114,7 +114,8 @@
 Функция добавления в сравнения: deleteFromCompare(id)  
 Функция удаления из сравнения: addInCompare(id)  
 Функция для проставноки активного класа: setActive()  //можна использовать если часть контента грузиться аяксом
-
+Функция callback после добавление в сравнение: afterAddToCompare(id,elem)
+Функция callback после удаления из сравнения: afterDeleteFormCompare(id,elem)
 
 ### Примеры
 

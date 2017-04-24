@@ -138,6 +138,10 @@ $('body').on('click',config['compareSelector'],function (e) {
         delete   cookie[id] ;
         elem.removeClass(config['active'])
         itemCount --;
+
+        if (typeof afterDeleteFormCompare == 'function') {
+            afterDeleteFormCompare(id,elem);
+        }
     }
     else{   //добавляем в сравнение
 
@@ -152,6 +156,9 @@ $('body').on('click',config['compareSelector'],function (e) {
         cookie[id] = true
         elem.addClass(config['active'])
         itemCount ++;
+        if (typeof afterAddToCompare == 'function') {
+            afterAddToCompare(id,elem);
+        }
     }
     c_setCookie('compare_ids',JSON.stringify(cookie),2592000)
     $(config['compareCount']).text(itemCount)
