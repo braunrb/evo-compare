@@ -114,7 +114,18 @@ function setActive() {
     return tmp;
 }
 itemCount = setActive()
-$(config['compareCount']).text(itemCount)
+
+
+//устанавливает количество елментов в сравнении
+function setCount(count) {
+    $(config['compareCount']).text(count)
+
+    if (typeof afterSetCount == 'function') {
+        afterSetCount(count);
+    }
+
+}
+setCount(itemCount)
 
 function deleteFromCompare(id) {
     var cookie = c_getCookie('compare_ids');
@@ -171,5 +182,5 @@ $('body').on('click',config['compareSelector'],function (e) {
         }
     }
     c_setCookie('compare_ids',JSON.stringify(cookie),2592000)
-    $(config['compareCount']).text(itemCount)
+     setCount(itemCount)
 })
