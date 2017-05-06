@@ -26,7 +26,7 @@
 &lang=Язык;string;ru
 &active=Клас который вказует что елемент в сравнении;string;active
 &compareSelector=селектор елементов для сравнения;string;.to-compare //
-&compareCount=Блок с количеством елементов с равнении;string;#compare-count
+&compareCount=Блок с количеством елементов с равнении;string;.compare-count
 
 */
 
