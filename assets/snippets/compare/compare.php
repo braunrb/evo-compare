@@ -98,6 +98,9 @@ class compare
         }
     }
     public function getItemsData(){
+        if(empty($this->tvs)){
+            return ;
+        }
         $tvs = implode(',',$this->tvs);
         if(!empty($this->config['requiredTV'])){
             $tvs .= ','.$this->config['requiredTV'];
@@ -257,6 +260,9 @@ class compare
     }
     public function getDefaultTVValues($array = array())
     {
+        if(empty($this->tvs)){
+            return ;
+        }
         $out = [];
         foreach ($this->config['tvs'] as $tv) {
             foreach ($tv as $tv_id => $element) {
