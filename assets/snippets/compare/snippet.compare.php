@@ -22,6 +22,13 @@ if($api==0){
         echo $compare->vocab['empty'];
         return '';
     }
+
+
+    if(empty($compare->tvs)){
+        echo $compare->vocab['emptyConfig'];
+        return '';
+    }
+
     echo $compare->render();
 }
 else{
