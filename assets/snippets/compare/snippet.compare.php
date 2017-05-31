@@ -33,7 +33,7 @@ if(is_array($data)){
     }
 }
 
- 
+
 if(empty($group)){
     $compare = new compare($modx,$params,$lang,$layoutType,[]);
     echo $compare->vocab['emptyConfig'];
