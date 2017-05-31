@@ -6,7 +6,9 @@
  * @category        compare
  * @name            compare_top
  * @elements        Да==yes
+ * @options         Да==yes
  * @internal        @elements Да==yes
+ * @internal        @options Да==yes
  * @internal        @caption Верхняя категория сравнения
  * @internal        @input_type checkbox
  * @internal        @input_options
