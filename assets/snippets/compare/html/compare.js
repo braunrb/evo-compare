@@ -1,22 +1,3 @@
-function c_getCookie(name) {
-    var cookie = " " + document.cookie;
-    var search = " " + name + "=";
-    var setStr = null;
-    var offset = 0;
-    var end = 0;
-    if (cookie.length > 0) {
-        offset = cookie.indexOf(search);
-        if (offset != -1) {
-            offset += search.length;
-            end = cookie.indexOf(";", offset)
-            if (end == -1) {
-                end = cookie.length;
-            }
-            setStr = unescape(cookie.substring(offset, end));
-        }
-    }
-    return(setStr);
-}
 function c_getPosition(elem){
     var el = $(elem).get(0);
     var p = {x: el.offsetLeft, y: el.offsetTop}
@@ -64,14 +45,6 @@ function c_helper(elem,name){
     setTimeout(function () {
         $('#stuffHelper').fadeOut(500);
     },500)
-}
-function c_setCookie (name, value, expires, path, domain, secure) {
-    path = '/'
-    document.cookie = name + "=" + escape(value) +
-        ((expires) ? "; expires=" + expires : "") +
-        ((path) ? "; path=" + path : "/") +
-        ((domain) ? "; domain=" + domain : "") +
-        ((secure) ? "; secure" : "");
 }
 function compare_parent() {
     var items = [];
@@ -122,8 +95,8 @@ var defaultConfig = {
     'compareCount':'#compare-count', // блок с количеством елементов с равнении
 };
 config = $.extend( defaultConfig, c_config );
-var cookie = c_getCookie('compare_ids');
 
+var cookie = localStorage.getItem('compare_ids');
 
 if(cookie === null){
 
@@ -199,6 +172,7 @@ $('body').on('click',config['compareSelector'],function (e) {
         if (typeof afterDeleteFormCompare == 'function') {
             afterDeleteFormCompare(id,elem);
         }
+        $.get('ajax-compare-delete',{id:id,parent:parent});
     }
     else{   //добавляем в сравнение
 
@@ -226,9 +200,10 @@ $('body').on('click',config['compareSelector'],function (e) {
         if (typeof afterAddToCompare == 'function') {
             afterAddToCompare(id,elem);
         }
+        $.get('ajax-compare-add',{id:id,parent:parent})
     }
     var json = JSON.stringify(cookie).replace("]]", "] ]");
+    localStorage.setItem('compare_ids', json);
 
-    c_setCookie('compare_ids',json,2592000)
      setCount(compareCountFull)
 })

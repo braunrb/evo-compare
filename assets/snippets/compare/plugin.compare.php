@@ -42,6 +42,38 @@ switch ($e->name) {
         $start = microtime(true);
 
         switch ($_GET['q']){
+            case 'ajax-compare-add':
+
+                $parent = intval($_GET['parent']);
+                $id = intval($_GET['id']);
+
+
+//                die();
+                $resp = $_COOKIE['compare_ids'];
+                
+                $resp = json_decode($resp,true);
+                if(!is_array($resp)){
+                    $resp = [];
+                };
+                $resp[$parent][$id] = true;
+                $json = str_replace('}}','} }',json_encode($resp));
+
+                setcookie ("compare_ids",$json , time() + 3600*24*30);
+               // var_dump($resp);
+
+                die();
+                break;
+            case 'ajax-compare-delete':
+                $parent = $_GET['parent'];
+                $id = $_GET['id'];
+
+                $data = $_COOKIE['compare_ids'];
+                $data = json_decode($data,true);
+                unset($data[$parent][$id]);
+
+                setcookie ("compare_ids", json_encode($data[$parent][$id]), time() + 3600*24*30);
+                die();
+                break;
             case 'compare_parent':
                 $data = $_GET['data'];
 
