@@ -65,7 +65,6 @@ function c_helper(elem,name){
         $('#stuffHelper').fadeOut(500);
     },500)
 }
-
 function c_setCookie (name, value, expires, path, domain, secure) {
     path = '/'
     document.cookie = name + "=" + escape(value) +
@@ -74,6 +73,48 @@ function c_setCookie (name, value, expires, path, domain, secure) {
         ((domain) ? "; domain=" + domain : "") +
         ((secure) ? "; secure" : "");
 }
+function compare_parent() {
+    var items = [];
+    $(config['compareSelector']).each(function (ind,elem) {
+        var id = $(elem).data('id');
+        items.push(id)
+    })
+    $.get('compare_parent',{data:items},function (data) {
+        data = JSON.parse(data);
+
+            for (var key in data) {
+                var value = data[key];
+                $('.to-compare[data-id="'+key+'"]').attr('data-parent',value['parent']);
+                $('.to-compare[data-id="'+key+'"]').attr('data-parent-title',value['title']);
+
+            }
+        setActive()
+        setCount(compareCountFull)
+    })
+}
+function setActive() {
+
+    for (parent = 0, len = cookie.length; parent < len; ++parent) {
+        if (cookie[parent] !== null) {
+            for (var id = 0, length = cookie[parent].length; id < length; ++id) {
+                if (cookie[parent][id] === true) {
+                    var elem = config['compareSelector'] + '[data-id="' + id + '"]';
+                    if ($(elem).length) {
+                        $(elem).addClass('active')
+                        if (typeof afterSetDefault == 'function') {
+                            afterSetDefault(key, elem, true);
+                        }
+                        if(typeof compareCount[parent] === 'undefined'){
+                            compareCount[parent] = 0;
+                        }
+                        compareCount[parent]++;
+                        compareCountFull++;
+                    }
+                }
+            }
+        }
+    }
+}
 
 var defaultConfig = {
     'active': 'active', //клас елемента который находиться в сравнении
@@ -81,39 +122,23 @@ var defaultConfig = {
     'compareCount':'#compare-count', // блок с количеством елементов с равнении
 };
 config = $.extend( defaultConfig, c_config );
-
 var cookie = c_getCookie('compare_ids');
-if(cookie==null){
-    cookie = {};
+
+
+if(cookie === null){
+
+    cookie = []
 }
 else{
-    cookie = JSON.parse(cookie)
-}
-var itemCount;
-//разстановка активного класа для елементов которие уже в сравнении
-var tmp = 0;
-function setActive() {
-    for (var key in cookie) {
-        var elem = config['compareSelector']+'[data-id="'+key+'"]';
-        if($(elem).length){
-            if(cookie[key] !== undefined){
-                $(elem).addClass('active')
-                if (typeof afterSetDefault == 'function') {
-                    afterSetDefault(key,elem,true);
-                }
+    var json = cookie.replace("} }", "}}");
 
-            }
-            else{
-                if (typeof afterSetDefault == 'function') {
-                    afterSetDefault(key,elem,false);
-                }
-            }
-        }
-        tmp ++;
-    }
-    return tmp;
+    cookie = JSON.parse(json);
+
 }
-itemCount = setActive()
+
+var compareCount = [];
+var compareCountFull = 0;
+compare_parent();
 
 
 //устанавливает количество елментов в сравнении
@@ -125,7 +150,7 @@ function setCount(count) {
     }
 
 }
-setCount(itemCount)
+
 
 function deleteFromCompare(id) {
     var cookie = c_getCookie('compare_ids');
@@ -149,16 +174,27 @@ function addInCompare(id) {
     cookie[id] = true;
     c_setCookie('compare_ids',JSON.stringify(cookie),2592000)
 }
+
+
 $('body').on('click',config['compareSelector'],function (e) {
     e.preventDefault()
 
     elem = $(this);
 
-    id = elem.attr('data-id')
+    var id = elem.attr('data-id');
+    var parent = elem.attr('data-parent');
+    var group = elem.attr('data-parent-title');
+
+    if(typeof compareCount[parent] === 'undefined'){
+        compareCount[parent] = 0;
+    }
+
+
     if(elem.hasClass(config['active'])){// убираем из сравнения
-        delete   cookie[id] ;
+        delete   cookie[parent][id] ;
         elem.removeClass(config['active'])
-        itemCount --;
+        compareCountFull --;
+        compareCount[parent]--;
 
         if (typeof afterDeleteFormCompare == 'function') {
             afterDeleteFormCompare(id,elem);
@@ -167,20 +203,32 @@ $('body').on('click',config['compareSelector'],function (e) {
     else{   //добавляем в сравнение
 
         //проверяем количество
-        if(itemCount>=c_config['max']){
+
+        if(compareCount[parent]>=c_config['max']){
             var message = c_message['maxMessage'];
-            message = message.replace('(current)', itemCount);
+            message = message.replace('(current)', compareCount[parent]);
             message = message.replace('(total)', c_config['max']);
+            message = message.replace('(group)', group);
             c_helper(elem,  message)
             return;
         }
-        cookie[id] = true
+
+        if(typeof cookie[parent] === 'undefined' || cookie[parent] === null){
+            cookie[parent] = [];
+        }
+
+        cookie[parent][id] = true;
+
         elem.addClass(config['active'])
-        itemCount ++;
+        compareCountFull ++;
+        compareCount[parent]++;
+
         if (typeof afterAddToCompare == 'function') {
             afterAddToCompare(id,elem);
         }
     }
-    c_setCookie('compare_ids',JSON.stringify(cookie),2592000)
-     setCount(itemCount)
+    var json = JSON.stringify(cookie).replace("]]", "] ]");
+
+    c_setCookie('compare_ids',json,2592000)
+     setCount(compareCountFull)
 })

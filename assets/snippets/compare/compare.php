@@ -53,12 +53,12 @@ class compare
         $_COOKIE['compare_ids'] = $resp;
         setcookie ("compare_ids", $resp, time() + 3600*24*30,'/');
     }
-    public function __construct($modx,$params,$lang,$layoutType)
+    public function __construct($modx,$params,$lang,$layoutType,$items)
     {
         $this->modx = $modx;
         $this->layoutType = $layoutType;
         $this->loadLexicon($lang);
-        $this->getItems();
+        $this->getItems($items);
 
         $this->config = array_merge($this->config,$params);
         if($this->layoutType=='horizontal'){
@@ -126,20 +126,23 @@ class compare
         }
     }
     //полумаем список товаров из
-    public function getItems(){
+    public function getItems($items){
 
-        $resp = $_COOKIE['compare_ids'];
-        $resp = json_decode($resp,true);
+        $resp = $items;
+
         $ids = [];
         if(is_array($resp)){
             foreach ($resp as $key=> $re){
-                $ids[$key]=intval($key);
+                $ids[$re]=intval($re);
                 if(empty($firstItem)){
-                    $firstItem = $key;
+                    $firstItem = $re;
                 }
             }
         }
         $this->ids = $ids;
+
+
+ ;
 
 
     }
@@ -229,13 +232,23 @@ class compare
             }
 
         }
+        $sortType = 'none';
+        $orderBy = 'category';
+        if($this->config['group'] == '1'){
+            $orderBy = 'category';
+        }
+        else{
+            $sortType = 'doclist';
+            $orderBy = '';
+        }
         $resp = $this->modx->runSnippet('DocLister',[
             'controller'=>'onetable',
             'table'=>'site_tmplvars',
             'idType'=>'documents',
             'documents'=>implode(',',$items),
             'api'=>1,
-            'orderBy'=>'category',
+            'orderBy'=>$orderBy,
+            'sortType'=>$sortType,
         ]);
         $tvs = [];
         $resp = json_decode($resp,true);
