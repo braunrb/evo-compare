@@ -50,7 +50,7 @@ switch ($e->name) {
 
 //                die();
                 $resp = $_COOKIE['compare_ids'];
-                
+
                 $resp = json_decode($resp,true);
                 if(!is_array($resp)){
                     $resp = [];

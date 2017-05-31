@@ -80,9 +80,10 @@ function setActive() {
                         if(typeof compareCount[parent] === 'undefined'){
                             compareCount[parent] = 0;
                         }
-                        compareCount[parent]++;
-                        compareCountFull++;
+
                     }
+                    compareCount[parent]++;
+                    compareCountFull++;
                 }
             }
         }
