@@ -1,3 +1,16 @@
+var defaultConfig = {
+    'active': 'active', //клас елемента который находиться в сравнении
+    'compareSelector':'.to-compare', // селектор елементов для сравнения
+    'compareCount':'#compare-count', // блок с количеством элементов в сравнении
+};
+config = $.extend( defaultConfig, c_config );
+var compare_top_id = 3;
+var cookieExpTime = 2592000;
+var cookieName = 'compare_ids';
+
+var compareCount = [];    // счётчик количества элементов в сравнении (в категории)
+var compareCountFull = 0; // счётчик общего количества элементов в сравнении (по всем категориям)
+
 // возвращает cookie с именем name, если есть, если нет, то undefined
 function getCookie(name) {
   var matches = document.cookie.match(new RegExp(
@@ -110,45 +123,34 @@ function compare_parent() {
     })
 }
 function setActive() {
+  var cookie = getCookie(cookieName);
+  var _compareCountFull = 0,
+      _compareCount = [];
     for (var parent in cookie) {
-        if (cookie[parent] !== null) {
-            for (var id in cookie[parent]) {
-                if (cookie[parent][id] === true) {
-                    var elem = config['compareSelector'] + '[data-id="' + id + '"]';
-                    if ($(elem).length) {
-                        $(elem).addClass('active')
-                        if (typeof afterSetDefault == 'function') {
-                            afterSetDefault(key, elem, true);
-                        }
-                        if(typeof compareCount[parent] === 'undefined'){
-                            compareCount[parent] = 0;
-                        }
-
+        for (var id in cookie[parent]) {
+            if (cookie[parent][id] === true) {
+                var elem = config['compareSelector'] + '[data-id="' + id + '"]';
+                if ($(elem).length) {
+                    $(elem).addClass('active')
+                    if (typeof afterSetDefault == 'function') {
+                        afterSetDefault(key, elem, true);
                     }
-                    compareCount[parent]++;
-                    compareCountFull++;
+                    if(typeof _compareCount[parent] === 'undefined'){
+                        _compareCount[parent] = 0;
+                    }
                 }
+                _compareCountFull++;
+                _compareCount[parent]++;
             }
         }
     }
+    compareCount = []; // обнуляем глобальный compareCount, на случай если кто-то вызовет setActive() 2 раза подряд.
+    for (var parent in _compareCount) {
+      compareCount[parent] = _compareCount[parent];
+    }
+    compareCountFull = _compareCountFull;
 }
 
-
-var defaultConfig = {
-    'active': 'active', //клас елемента который находиться в сравнении
-    'compareSelector':'.to-compare', // селектор елементов для сравнения
-    'compareCount':'#compare-count', // блок с количеством елементов с равнении
-};
-config = $.extend( defaultConfig, c_config );
-var compare_top_id = 1;
-var cookieExpTime = 2592000;
-var cookieName = 'compare_ids';
-var cookie = getCookie(cookieName);
-
-var compareCount = [];
-var compareCountFull = 0;
-
-compare_parent();
 
 //устанавливает количество элементов в сравнении
 function setCount(count) {
@@ -164,6 +166,11 @@ function setCount(count) {
 function clearCompare() {
     $.get('ajax-compare-clear');
     localStorage.removeItem(cookieName); // fix для старой версии
+    for (var parent in compareCount) {
+      compareCount[parent] = 0;
+    }
+    compareCountFull = 0;
+    setActive(); // чтобы обновить данные на странице
 }
 
 function deleteFromCompare(id) {
@@ -176,7 +183,7 @@ function deleteFromCompare(id) {
       }
     }
     setCookie(cookieName, cookie, cookieExpTime);
-    $.get('ajax-compare-delete',{id:id,parent:_parent}); // чтобы работало при ajax
+    $.get('ajax-compare-delete',{id:id,parent:parent}); // чтобы работало при ajax
 }
 function addInCompare(id, parent = compare_top_id) {
     var cookie = getCookie(cookieName);
@@ -206,7 +213,7 @@ $('body').on('click',config['compareSelector'],function (e) {
         compareCountFull --;
         compareCount[parent]--;
 
-        deleteFromCompare(id,parent);
+        deleteFromCompare(id);
 
         if (typeof afterDeleteFormCompare == 'function') {
             afterDeleteFormCompare(id,elem);
