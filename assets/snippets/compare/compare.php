@@ -43,15 +43,25 @@ class compare
     ];
 
     static function delete($id){
+        $flag = true;
         $id = intval($id);
         $resp = $_COOKIE['compare_ids'];
         $resp = json_decode($resp,true);
-        if(!empty($resp[$id])){
-            unset($resp[$id]);
+
+        foreach ($resp as $parent => $arr) {
+            foreach ($arr as $_id => $val) {
+                if (!empty($resp[$parent][$_id]) && $_id == $id) {
+                    unset($resp[$parent][$id]);
+                    $flag = false;
+                }
+            }
         }
-        $resp = json_encode($resp);
-        $_COOKIE['compare_ids'] = $resp;
-        setcookie ("compare_ids", $resp, time() + 3600*24*30,'/');
+        if ($flag) {return false;}
+        $json = str_replace('}}','} }',json_encode($resp,JSON_FORCE_OBJECT)); // MODx fix
+        //$_COOKIE['compare_ids'] = $json;
+        setcookie ("compare_ids", $json, time() + 3600*24*30,'/');
+        header('Location: '.$_SERVER['REDIRECT_URL']);
+        exit;
     }
     public function __construct($modx,$params,$lang,$layoutType,$items)
     {
@@ -430,7 +440,7 @@ class compare
         $output =  $this->modx->parseText($this->config['ownerTpl'],['wrapper'=>$trStr]);
         return $output;
     }
-    
+
     public function renderVertical(){
 
         $items = '';

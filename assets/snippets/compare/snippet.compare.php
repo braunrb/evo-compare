@@ -40,7 +40,7 @@ if(empty($group)){
     return '';
 }
 
-//обертка блока из сранениям
+//обертка блока из сранения
 $compareOwner = isset($compareOwner)?$compareOwner:'@CODE:<div><h3>[+title+]</h3><p>[+messages+]</p>[+wrapper+]</div>';
 $compareOwner = $modx->getTpl($compareOwner);
 
@@ -66,4 +66,3 @@ if(is_array($group)){
 
     }
 }
-
