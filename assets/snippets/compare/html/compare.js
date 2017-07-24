@@ -3,11 +3,11 @@ function getCookie(name) {
   var matches = document.cookie.match(new RegExp(
     "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
   ));
-  matches = matches ? decodeURIComponent(matches[1]) : undefined;
-  matches = matches.replace(/\+/g, ' ');
+  matches = matches ? decodeURIComponent(matches[1]) : null;
   if( matches === null){
       return {};
   }
+  matches = matches.replace(/\+/g, ' ');
   var cookie = matches.replace("} }", "}}");
   cookie = JSON.parse(cookie);
   return cookie;
