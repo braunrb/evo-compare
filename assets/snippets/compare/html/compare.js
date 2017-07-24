@@ -4,7 +4,7 @@ var defaultConfig = {
     'compareCount':'#compare-count', // блок с количеством элементов в сравнении
 };
 config = $.extend( defaultConfig, c_config );
-var compare_top_id = 3;
+var compare_top_id = 1; // если нет категорий, то всё будет писаться для parent=1
 var cookieExpTime = 2592000;
 var cookieName = 'compare_ids';
 
@@ -104,6 +104,19 @@ function c_helper(elem,name){
         $('#stuffHelper').fadeOut(500);
     },500)
 }
+function showHelper(elem,msg){
+    if(typeof($(elem).get(0))=='undefined') return;
+    $(elem).popover({
+      placement: 'top',
+      trigger: 'manual',
+      container: 'body',
+      content: msg
+    });
+    $(elem).popover('show');
+    setTimeout(function () {
+        $(elem).popover('hide');
+    },1500);
+}
 
 function compare_parent() {
     var items = [];
@@ -134,7 +147,7 @@ function setActive() {
                 if ($(elem).length) {
                     $(elem).addClass('active')
                     if (typeof afterSetDefault == 'function') {
-                        afterSetDefault(key, elem, true);
+                        afterSetDefault(id, elem, true);
                     }
                     if(typeof _compareCount[parent] === 'undefined'){
                         _compareCount[parent] = 0;
@@ -166,6 +179,8 @@ function setCount(count) {
     }
 
 }
+
+compare_parent();
 
 //очистка списка сравнения
 function clearCompare() {
@@ -236,7 +251,8 @@ $('body').on('click',config['compareSelector'],function (e) {
             message = message.replace('(current)', compareCount[parent]);
             message = message.replace('(total)', c_config['max']);
             message = message.replace('(group)', group);
-            c_helper(elem,  message)
+            c_helper(elem, message);
+            //showHelper(elem, message); // вариант хелпера для bootstrap
             return;
         }
 
