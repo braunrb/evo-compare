@@ -122,6 +122,7 @@ function compare_parent() {
         setCount(compareCountFull);
     })
 }
+
 function setActive() {
   var cookie = getCookie(cookieName);
   var _compareCountFull = 0,
@@ -144,13 +145,17 @@ function setActive() {
             }
         }
     }
+    if (parent === undefined) {
+      $(config['compareSelector']).each(function(indx, elem){
+        $(elem).removeClass('active');
+      });
+    }
     compareCount = []; // обнуляем глобальный compareCount, на случай если кто-то вызовет setActive() 2 раза подряд.
     for (var parent in _compareCount) {
       compareCount[parent] = _compareCount[parent];
     }
     compareCountFull = _compareCountFull;
 }
-
 
 //устанавливает количество элементов в сравнении
 function setCount(count) {
@@ -164,6 +169,8 @@ function setCount(count) {
 
 //очистка списка сравнения
 function clearCompare() {
+  var cookie = {};
+    setCookie(cookieName, cookie, cookieExpTime);
     $.get('ajax-compare-clear');
     localStorage.removeItem(cookieName); // fix для старой версии
     for (var parent in compareCount) {
@@ -171,6 +178,7 @@ function clearCompare() {
     }
     compareCountFull = 0;
     setActive(); // чтобы обновить данные на странице
+    setCount(0);
 }
 
 function deleteFromCompare(id) {
