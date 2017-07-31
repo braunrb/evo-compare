@@ -198,7 +198,7 @@ function clearCompare() {
 
 function deleteFromCompare(id) {
     var cookie = getCookie(cookieName);
-    var _parent = false;
+    var _parent = compare_top_id;
     for (var parent in cookie) {
       if (cookie[parent][id] === true) {
         delete cookie[parent][id];
@@ -206,7 +206,7 @@ function deleteFromCompare(id) {
       }
     }
     setCookie(cookieName, cookie, cookieExpTime);
-    $.get('ajax-compare-delete',{id:id,parent:parent}); // чтобы работало при ajax
+    $.get('ajax-compare-delete',{id:id,parent:_parent}); // чтобы работало при ajax
 }
 function addInCompare(id, parent = compare_top_id) {
     var cookie = getCookie(cookieName);

@@ -60,7 +60,11 @@ class compare
         $json = str_replace('}}','} }',json_encode($resp,JSON_FORCE_OBJECT)); // MODx fix
         //$_COOKIE['compare_ids'] = $json;
         setcookie ("compare_ids", $json, time() + 3600*24*30,'/');
-        header('Location: '.$_SERVER['REDIRECT_URL']);
+        if (isset($_SERVER['REDIRECT_URL'])) {
+            header('Location: '.$_SERVER['REDIRECT_URL']);
+        } else {
+            header('Location: /');
+        }
         exit;
     }
     public function __construct($modx,$params,$lang,$layoutType,$items)
