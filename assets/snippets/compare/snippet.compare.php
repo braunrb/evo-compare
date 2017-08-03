@@ -27,42 +27,52 @@ if(is_array($data)){
                 continue;
             }
             $group[$parent][]=$id;
-
-
         }
     }
-}
-
-
-if(empty($group)){
-    $compare = new compare($modx,$params,$lang,$layoutType,[]);
-    echo $compare->vocab['emptyConfig'];
-    return '';
 }
 
 //обертка блока из сранения
 $compareOwner = isset($compareOwner)?$compareOwner:'@CODE:<div><h3>[+title+]</h3><p>[+messages+]</p>[+wrapper+]</div>';
 $compareOwner = $modx->getTpl($compareOwner);
 
-if(is_array($group)){
-    foreach ($group as $key=> $elements){
-        $title = $modx->runSnippet('DocInfo',['docid'=>$key]);
+if(empty($group)){
+    $compare = new compare($modx,$params,$lang,$layoutType,[]);
+    //echo $compare->vocab['emptyConfig'];
+    echo $modx->parseText($compareOwner,[
+        'title'=>$title,
+        'messages'=>$compare->vocab['emptyConfig'],
+        'wrapper'=>''
+    ]);
+    return '';
+}
 
+if(is_array($group)){
+    foreach ($group as $key => $elements){
+        $title = $modx->runSnippet('DocInfo',['docid'=>$key]);
         $compare = new compare($modx,$params,$lang,$layoutType,$elements);
         if(count($compare->ids)<=1){
-            echo $modx->parseText($compareOwner,['title'=>$title,'messages'=>$compare->vocab['empty']]);
+            echo $modx->parseText($compareOwner,[
+                'title'=>$title,
+                'messages'=>$compare->vocab['empty'],
+                'wrapper'=>''
+            ]);
             continue;
         }
 
-
         if(empty($compare->tvs)){
-
-            echo $modx->parseText($compareOwner,['title'=>$title,'messages'=>$compare->vocab['emptyConfig']]);
+            echo $modx->parseText($compareOwner,[
+                'title'=>$title,
+                'messages'=>$compare->vocab['emptyConfig'],
+                'wrapper'=>''
+            ]);
             continue;
         }
 
         $wrapper = $compare->render();
-        echo $modx->parseText($compareOwner,['title'=>$title,'wrapper'=>$wrapper]);
-
+        echo $modx->parseText($compareOwner,[
+            'title'=>$title,
+            'messages'=>'',
+            'wrapper'=>$wrapper
+        ]);
     }
 }
