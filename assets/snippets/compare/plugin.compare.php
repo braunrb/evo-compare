@@ -43,21 +43,15 @@ switch ($e->name) {
 
         switch ($_GET['q']){
             case 'ajax-compare-add':
-
                 $parent = intval($_GET['parent']);
                 $id = intval($_GET['id']);
-
-
-//                die();
                 $resp = $_COOKIE['compare_ids'];
-
                 $resp = json_decode($resp,true);
                 if(!is_array($resp)){
                     $resp = [];
                 };
                 $resp[$parent][$id] = true;
-                $json = str_replace('}}','} }',json_encode($resp));
-
+                $json = str_replace('}}','} }',json_encode($resp,JSON_FORCE_OBJECT)); // MODx fix
                 setcookie ("compare_ids",$json , time() + 3600*24*30);
                // var_dump($resp);
 
@@ -66,12 +60,16 @@ switch ($e->name) {
             case 'ajax-compare-delete':
                 $parent = $_GET['parent'];
                 $id = $_GET['id'];
-
                 $data = $_COOKIE['compare_ids'];
                 $data = json_decode($data,true);
                 unset($data[$parent][$id]);
-
-                setcookie ("compare_ids", json_encode($data[$parent][$id]), time() + 3600*24*30);
+                $json = str_replace('}}','} }',json_encode($data,JSON_FORCE_OBJECT)); // MODx fix
+                setcookie ("compare_ids", $json, time() + 3600*24*30);
+                die();
+                break;
+            // полностью очистить список сравнения
+            case 'ajax-compare-clear':
+                setcookie ("compare_ids", "", time() - 3600);
                 die();
                 break;
             case 'compare_parent':
@@ -86,18 +84,13 @@ switch ($e->name) {
                     'addWhereList'=>'template = '.$categoryTemplate,
                     'showParent'=>1,
                     'tvList'=>'compare_top,compare_group_name',
-                    'tvPrefix'=>'',
-
+                    'tvPrefix'=>''
                 ]);
                 $resp = json_decode($resp,true);
-
                 $new = [];
                 foreach ($data as $el) {
-
-
                     $elParent = $modx->runSnippet('DocInfo',['field'=>'parent','docid'=>$el]);
                     $parent = compare_parent($elParent);
-
                     $new[$el]= ['parent'=>$parent,'title'=>$resp[$parent]['compare_group_name']];
                 }
 
@@ -111,7 +104,7 @@ switch ($e->name) {
     case 'OnWebPageInit':
 
         $ru = '
-           
+
             var c_message = {
                 maxMessage:"Максимальное количество (group) для сравнения: (current) / (total)"
             }
@@ -146,12 +139,11 @@ switch ($e->name) {
                 active:"'.$active.'",
                 compareSelector:"'.$compareSelector.'",
                 compareCount:"'.$compareCount.'",
-                
+
             };
             '.$message.'
 
 </script>');
-
 
         if($css == 1){
             $modx->regClientCSS('/assets/snippets/compare/html/compare.css');

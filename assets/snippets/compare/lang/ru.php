@@ -1,7 +1,7 @@
 <?php
 
 return $vocab =  [
-    'empty'=>'Для сравнения нужна 2 и более товаров',
-    'emptyConfig'=>'No parameters to compare',
+    'empty'=>'Для сравнения нужно 2 и более товаров',
+    'emptyConfig'=>'Ничего не выбрано',
     'paramCaption'=>'Параметры'
 ];
